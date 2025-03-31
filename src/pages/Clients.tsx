@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { MailIcon } from 'lucide-react';
 
 export function Clients() {
-  
+
   type Client = {
     name: string;
     phone: string;
@@ -40,7 +40,6 @@ export function Clients() {
       email: 'janedoe@example.com',
       lastActivity: 'Le 12/03/2024 à 15h00',
     },
-    // Add more clients for testing pagination
   ];
 
   const handleSelectChange = (event: FormEvent, client: Client) => {
@@ -61,6 +60,28 @@ export function Clients() {
     currentPage * clientsPerPage
   );
 
+  const handleExportCSV = () => {
+    const header = ['Nom et Prenom', 'Telephone', 'Email', 'Derniere Activite'];
+    const rows = selectedClients.map(client => [
+      client.name,
+      client.phone,
+      client.email,
+      client.lastActivity
+    ]);
+
+    const csvContent = [
+      header.join(','),
+      ...rows.map(row => row.join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'clients.csv');
+    link.click();
+  };
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -74,16 +95,23 @@ export function Clients() {
           </select>
         </div>
       </div>
-
       <div className="my-6">
         {selectedClients.length > 0 && (
-          <button className="bg-[#070438] text-white px-4 py-2 rounded-lg flex items-center w-full md:w-auto">
-            Contact &nbsp;
-            <MailIcon size={20} />
-          </button>
+          <div className="flex gap-4">
+            <button className="bg-[#070438] text-white px-4 py-2 rounded-lg flex items-center">
+              Contact &nbsp;
+              <MailIcon size={20} />
+            </button>
+            <button
+              onClick={handleExportCSV}
+              className="bg-[#070438] text-white px-4 py-2 rounded-lg flex items-center"
+            >
+              Exporter CSV &nbsp;
+              <i className="fa fa-download" aria-hidden="true"></i>
+            </button>
+          </div>
         )}
       </div>
-
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex flex-col md:flex-row items-center justify-between mb-6">
           <h2 className="text-xl font-semibold mb-4 md:mb-0">Liste des clients</h2>
@@ -101,7 +129,6 @@ export function Clients() {
             </select>
           </div>
         </div>
-
         <table className="w-full table-auto">
           <thead>
             <tr className="text-left text-gray-500 border-b">
@@ -123,7 +150,9 @@ export function Clients() {
                     className="mr-2"
                   />
                 </td>
-                <td className="py-4">{client.name}</td>
+                <a href="/clients/info">
+                  <td className="py-4">{client.name}</td>
+                </a>
                 <td>{client.phone}</td>
                 <td>{client.email}</td>
                 <td>{client.lastActivity}</td>

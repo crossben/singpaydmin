@@ -41,6 +41,7 @@ function Login() {
                 title: 'Succès',
                 text: 'Connexion réussie!',
             });
+            window.location.href = '/dashboard';
         }
     };
 
@@ -70,13 +71,11 @@ function Login() {
                             className="w-full p-3 rounded bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:border-white/40"
                         />
                     </div>
-
                     <div className="text-right">
                         <a href="#" className="text-white/70 hover:text-white text-sm">
                             Mot de passe oublié?
                         </a>
                     </div>
-
                     <div className="flex gap-4 pt-2">
                         <button
                             type="submit"

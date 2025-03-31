@@ -36,17 +36,47 @@ export function Portefeuille() {
     currentPage * portefeuillesPerPage
   );
 
+  const handleExportCSV = () => {
+    const header = ['Projet', 'Client', 'Date', 'Status'];
+    const rows = selectedClients.map(client => [
+      client.project,
+      client.client,
+      client.date,
+      client.status
+    ]);
+
+    const csvContent = [
+      header.join(','), 
+      ...rows.map(row => row.join(',')) 
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'portefeuilles.csv');
+    link.click();
+  };
+
   return (
     <>
       <Header title="Portefeuille client" />
       <div className="my-6">
         {selectedClients.length > 0 && (
-          <button className="bg-[#070438] text-white px-4 py-2 rounded-lg flex items-center w-full md:w-auto">
-            Contact &nbsp;
-          </button>
+          <div className="flex gap-4">
+            <button className="bg-[#070438] text-white px-4 py-2 rounded-lg flex items-center w-full md:w-auto">
+              Contact &nbsp;
+            </button>
+            <button
+              onClick={handleExportCSV}
+              className="bg-[#070438] text-white px-4 py-2 rounded-lg flex items-center"
+            >
+              Exporter CSV &nbsp;
+              <i className="fa fa-download" aria-hidden="true"></i>
+            </button>
+          </div>
         )}
       </div>
-
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex flex-col md:flex-row items-center justify-between mb-6">
           <h2 className="text-xl font-semibold mb-4 md:mb-0">Liste des portefeuilles</h2>
@@ -79,7 +109,7 @@ export function Portefeuille() {
             </tr>
           </thead>
           <tbody>
-            {portefeuilles.map((portefeuille, index) => (
+            {currentPortefeuille.map((portefeuille, index) => (
               <tr key={index} className="border-b">
                 <td className="py-4">
                   <input
@@ -89,7 +119,11 @@ export function Portefeuille() {
                     className="mr-2"
                   />
                 </td>
-                <td className="py-4">{portefeuille.project}</td>
+                <td className="py-4">
+                  <a href="/portefeuille/info" className="hover:underline">
+                    {portefeuille.project}
+                  </a>
+                </td>
                 <td>{portefeuille.client}</td>
                 <td>{portefeuille.date}</td>
                 <td>

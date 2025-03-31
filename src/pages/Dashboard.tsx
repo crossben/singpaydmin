@@ -84,7 +84,6 @@ function Chart() {
   );
 }
 
-
 export function Dashboard() {
   return (
     <>

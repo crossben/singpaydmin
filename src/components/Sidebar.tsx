@@ -13,7 +13,7 @@ export function Sidebar() {
         </div>
 
         <nav className="space-y-2">
-          <NavLink to="/" className={navLinkClass}>
+          <NavLink to="/dashboard" className={navLinkClass}>
             <LayoutGrid size={20} />
             <span>Dashboard</span>
           </NavLink>
@@ -28,10 +28,6 @@ export function Sidebar() {
           <NavLink to="/transactions" className={navLinkClass}>
             <FileText size={20} />
             <span>Transaction</span>
-          </NavLink>
-          <NavLink to="/login" className={navLinkClass}>
-            <User size={20} />
-            <span>Login</span>
           </NavLink>
         </nav>
       </div>
