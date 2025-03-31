@@ -4,7 +4,67 @@ import { StatCard } from '../components/StatCard';
 
 export function Transactions() {
   const [statusOpen, setStatusOpen] = useState(false);
+  const [selectedTransactions, setSelectedTransactions] = useState<any>([]);
   const statuses = ['In Progress', 'Complete', 'Pending', 'Approved', 'Rejected'];
+
+  const transactions = [
+    { ref: 'TRX123', client: 'John Doe', status: 'Completed', amount: '1000 XAF', profit: '100 XAF', date: '2023-10-01' },
+    { ref: 'TRX124', client: 'Jane Smith', status: 'Pending', amount: '2000 XAF', profit: '200 XAF', date: '2023-10-02' },
+    { ref: 'TRX125', client: 'Alice Johnson', status: 'In Progress', amount: '1500 XAF', profit: '150 XAF', date: '2023-10-03' },
+    { ref: 'TRX126', client: 'Bob Brown', status: 'Completed', amount: '3000 XAF', profit: '300 XAF', date: '2023-10-04' },
+  ];
+
+  const toggleSelectTransaction = (ref: any) => {
+    setSelectedTransactions((prevSelected: any) => {
+      if (prevSelected.includes(ref)) {
+        return prevSelected.filter((r: any) => r !== ref);
+      } else {
+        return [...prevSelected, ref];
+      }
+    });
+  };
+
+  const selectAllTransactions = () => {
+    if (selectedTransactions.length === transactions.length) {
+      setSelectedTransactions([]);
+    } else {
+      setSelectedTransactions(transactions.map((transaction) => transaction.ref));
+    }
+  };
+
+  const convertToCSV = (data: any) => {
+    const header = ['Ref', 'Client', 'Status', 'Montant', 'Benefice', 'Date'];
+    const rows = data.map((transaction: any) => [
+      transaction.ref,
+      transaction.client,
+      transaction.status,
+      transaction.amount,
+      transaction.profit,
+      transaction.date,
+    ]);
+
+    const csvContent = [
+      header.join(','),
+      ...rows.map((row : any) => row.join(',')),
+    ].join('\n');
+
+    return csvContent;
+  };
+
+  const downloadCSV = () => {
+    const selectedData = transactions.filter((transaction: any) =>
+      selectedTransactions.includes(transaction.ref)
+    );
+    const csvData = convertToCSV(selectedData);
+
+    const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'transactions.csv');
+    link.click();
+    window.URL.revokeObjectURL(url);
+  };
 
   return (
     <>
@@ -36,6 +96,22 @@ export function Transactions() {
         <StatCard title="Total transaction" value="2" />
       </div>
       <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="flex flex-wrap gap-4 mb-6">
+          <button
+            onClick={selectAllTransactions}
+            className="px-3 py-2 bg-[#070438] text-white rounded-lg"
+          >
+            {selectedTransactions.length === transactions.length ? 'Tout Deselectionner' : 'Tout Selectionner'}
+          </button>
+            {selectedTransactions.length > 0 && (
+            <button
+              onClick={downloadCSV}
+              className="px-3 py-2 bg-[#070438] text-white rounded-lg ml-4"
+            >
+              Exporter en CSV
+            </button>
+            )}
+        </div>
         <div className="flex flex-col md:flex-row items-center justify-between mb-6">
           <h2 className="text-xl font-semibold mb-4 md:mb-0">Liste des transactions</h2>
           <div className="relative w-full max-w-xs">
@@ -52,12 +128,12 @@ export function Transactions() {
                   <option value="te">ONU</option>
                 </select>
               </div>
-                <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4">
                 <label className="flex items-center gap-2">
                   <span className='font-bold'>25 million atteint</span>
                   <input type="checkbox" className="rounded" />
                 </label>
-                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -124,9 +200,35 @@ export function Transactions() {
             </tr>
           </thead>
           <tbody>
-            {
-              // ajoute des utilisateur ici
-            }
+            {transactions.map((transaction, index) => (
+              <tr key={index} className="border-b">
+                <td className="py-4">
+                  <input
+                    type="checkbox"
+                    checked={selectedTransactions.includes(transaction.ref)}
+                    onChange={() => toggleSelectTransaction(transaction.ref)}
+                    className="rounded"
+                  />
+                </td>
+                <td className="py-4">
+                  <a href="/portefeuille/info" className="hover:underline">
+                    {transaction.ref}
+                  </a>
+                </td>
+                <td>{transaction.client}</td>
+                <td>
+                  <span
+                    className={`px-3 py-1 ${transaction.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                      } rounded-s-sm text-sm`}
+                  >
+                    {transaction.status}
+                  </span>
+                </td>
+                <td>{transaction.amount}</td>
+                <td>{transaction.profit}</td>
+                <td>{transaction.date}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

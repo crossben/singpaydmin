@@ -14,20 +14,36 @@ function App() {
     <>
       <Head />
       <BrowserRouter>
-        <div className="flex min-h-screen bg-gray-50">
-          <Sidebar />
-          <main className="flex-1 p-8">
-            <Routes>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/clients" element={<Clients />} />
-              <Route path="/clients/info" element={<ClientInfoPage />} />
-              <Route path="/portefeuille" element={<Portefeuille />} />
-              <Route path="/portefeuille/info" element={<InfoPortefeuille />} />
-              <Route path="/transactions" element={<Transactions />} />
-              <Route path="/" element={<Login />} />
-            </Routes>
-          </main>
-        </div>
+        <Routes>
+          <Route
+        path="/"
+        element={
+          <div className="flex min-h-screen bg-gray-50">
+            <main className="flex-1 p-8">
+          <Login />
+            </main>
+          </div>
+        }
+          />
+          <Route
+        path="*"
+        element={
+          <div className="flex min-h-screen bg-gray-50">
+            <Sidebar />
+            <main className="flex-1 p-8">
+          <Routes>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/clients" element={<Clients />} />
+            <Route path="/clients/info" element={<ClientInfoPage />} />
+            <Route path="/portefeuille" element={<Portefeuille />} />
+            <Route path="/portefeuille/info" element={<InfoPortefeuille />} />
+            <Route path="/transactions" element={<Transactions />} />
+          </Routes>
+            </main>
+          </div>
+        }
+          />
+        </Routes>
       </BrowserRouter>
     </>
   );
